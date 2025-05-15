@@ -52,6 +52,8 @@ class CursoController extends Controller
             'precio' => 'required|numeric|min:0',
             'duracion_horas' => 'required|integer|min:1',
             'categoria_id' => 'required|exists:categorias,id',
+            'id_instructor' => 'required|exists:instructores,id',
+
         ]);
 
         $curso = Curso::create($validated);

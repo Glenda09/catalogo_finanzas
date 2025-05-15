@@ -16,6 +16,7 @@ class Usuarios extends Authenticatable implements JWTSubject
         'nombre',
         'apellido',
         'email',
+        'ultima_sesion',
         'password',
     ];
 
@@ -26,7 +27,7 @@ class Usuarios extends Authenticatable implements JWTSubject
 
     public function roles()
     {
-        return $this->belongsToMany(Role::class, 'usuario_rol', 'usuario_id', 'rol_id');
+        return $this->belongsToMany(Role::class, 'usuario_rol', 'id_usuario', 'id_rol');
     }
 
     // Métodos requeridos por JWTSubject:
@@ -50,5 +51,10 @@ class Usuarios extends Authenticatable implements JWTSubject
     public function tieneRol($nombreRol)
     {
         return $this->roles()->where('nombre', $nombreRol)->exists();
+    }
+
+    public function instructor()
+    {
+        return $this->hasMany(Instructor::class, 'id_usuario', 'id');
     }
 }

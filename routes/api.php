@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CursoController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\InstructorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,14 +17,36 @@ use App\Http\Controllers\AuthController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::post('login', [AuthController::class, 'login']);
-Route::middleware('auth:api')->group(function () {
-    Route::post('logout', [AuthController::class, 'logout']);
-    Route::get('me', [AuthController::class, 'me']);
+
+Route::prefix('auth')->group(function () {
+    Route::post('/', [AuthController::class, 'login']);
+    Route::post('/cerrar-sesion', [AuthController::class, 'logout']);
 });
 
 
-Route::middleware(['auth:api', 'role:admin'])->group(function () {
-    Route::apiResource('cursos', CursoController::class);
+Route::prefix('cursos')->group(function () {
+    Route::get('/', [CursoController::class, 'index']);
+    Route::post('/', [CursoController::class, 'store']);
+    Route::get('/{id}', [CursoController::class, 'show']);
+    Route::put('/{id}', [CursoController::class, 'update']);
+    Route::delete('/{id}', [CursoController::class, 'destroy']);
+});
+
+//instructor
+Route::prefix('instructores')->group(function () {
+    Route::get('/', [InstructorController::class, 'index']);
+    Route::post('/', [InstructorController::class, 'store']);
+    Route::get('/{id}', [InstructorController::class, 'show']);
+    Route::put('/{id}', [InstructorController::class, 'update']);
+    Route::delete('/{id}', [InstructorController::class, 'destroy']);
+});
+
+//usuarios
+Route::prefix('usuarios')->group(function () {
+    Route::get('/', [UsuarioController::class, 'index']);
+    Route::post('/', [UsuarioController::class, 'store']);
+    Route::get('/{id}', [UsuarioController::class, 'show']);
+    Route::put('/{id}', [UsuarioController::class, 'update']);
+    Route::delete('/{id}', [UsuarioController::class, 'destroy']);
 });
 

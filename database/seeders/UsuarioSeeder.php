@@ -20,7 +20,7 @@ class UsuarioSeeder extends Seeder
                 'apellido' => 'Finanzas',
                 'email' => 'finanzas@gmail.com',
                 'telefono' => '1234567890',
-                'password' => bcrypt('Admin123'),
+                'password' => 'Admin123',
             ]
         );
 

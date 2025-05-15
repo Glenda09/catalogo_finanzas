@@ -5,17 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Categoria extends Model
+class MetodoPago extends Model
 {
     use HasFactory;
+    protected $table = 'metodo_pago';
+
     protected $fillable = [
         'nombre',
-        'descripcion',
         'activo',
     ];
 
-    public function cursos()
+    public function inscripcion()
     {
-        return $this->hasMany(Curso::class);
+        return $this->hasMany(Inscripcion::class, 'id_metodo_pago');
     }
 }

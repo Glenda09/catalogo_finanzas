@@ -9,24 +9,24 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('pagos', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre')->unique();
-            $table->string('descripcion')->nullable();
+            $table->foreignId('id_inscripcion')->constrained('inscripcions')->onDelete('cascade');
+            $table->decimal('monto', 10, 2);
+            $table->date('fecha_pago');
+            $table->foreignId('id_metodo_pago')->constrained('metodo_pagos')->onDelete('cascade');
             $table->boolean('activo')->default(true);
-            $table->foreignId('creado_por')->constrained('usuarios')->onDelete('cascade');
             $table->timestamps();
         });
     }
-
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('pagos');
     }
 };

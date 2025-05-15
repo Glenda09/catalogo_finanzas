@@ -9,24 +9,23 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('inscripcions', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre')->unique();
-            $table->string('descripcion')->nullable();
+            $table->foreignId('id_usuario')->constrained('usuarios')->onDelete('cascade');
+            $table->foreignId('id_curso')->constrained('cursos')->onDelete('cascade');
+            $table->date('fecha_inscripcion');
             $table->boolean('activo')->default(true);
-            $table->foreignId('creado_por')->constrained('usuarios')->onDelete('cascade');
             $table->timestamps();
         });
     }
-
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('inscripcions');
     }
 };

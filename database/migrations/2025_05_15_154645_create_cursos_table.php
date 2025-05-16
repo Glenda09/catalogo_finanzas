@@ -18,7 +18,7 @@ return new class extends Migration
             $table->decimal('precio', 8, 2);
             $table->integer('duracion_horas');
             $table->foreignId('id_categoria')->constrained('categorias')->onDelete('cascade');
-            $table->foreignId('id_instructor')->constrained('instructors')->onDelete('cascade');
+            $table->foreignId('id_instructor')->constrained('instructores')->onDelete('cascade');
             $table->boolean('activo')->default(true);
             $table->foreignId('creado_por')->constrained('usuarios')->onDelete('cascade');
             $table->timestamps();

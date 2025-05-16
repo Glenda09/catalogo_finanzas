@@ -6,6 +6,8 @@ use App\Http\Controllers\CursoController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\InstructorController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UsuarioRolController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,10 +37,9 @@ Route::prefix('cursos')->group(function () {
 //instructor
 Route::prefix('instructores')->group(function () {
     Route::get('/', [InstructorController::class, 'index']);
-    Route::post('/', [InstructorController::class, 'store']);
     Route::get('/{id}', [InstructorController::class, 'show']);
-    Route::put('/{id}', [InstructorController::class, 'update']);
     Route::delete('/{id}', [InstructorController::class, 'destroy']);
+    Route::get('/{id}/cursos', [InstructorController::class, 'getCursos']);
 });
 
 //usuarios
@@ -50,3 +51,20 @@ Route::prefix('usuarios')->group(function () {
     Route::delete('/{id}', [UsuarioController::class, 'destroy']);
 });
 
+//roles
+Route::prefix('roles')->group(function () {
+    Route::get('/', [RoleController::class, 'index']);
+    Route::post('/', [RoleController::class, 'store']);
+    Route::get('/{id}', [RoleController::class, 'show']);
+    Route::put('/{id}', [RoleController::class, 'update']);
+    Route::delete('/{id}', [RoleController::class, 'destroy']);
+});
+
+//usuario-rol
+Route::prefix('usuario_rol')->group(function () {
+    Route::get('/', [UsuarioRolController::class, 'index']);
+    Route::post('/', [UsuarioRolController::class, 'store']);
+    Route::get('/{id}', [UsuarioRolController::class, 'show']);
+    Route::put('/{id}', [UsuarioRolController::class, 'update']);
+    Route::delete('/{id}', [UsuarioRolController::class, 'destroy']);
+});

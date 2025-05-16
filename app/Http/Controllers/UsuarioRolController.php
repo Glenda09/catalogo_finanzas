@@ -44,7 +44,6 @@ class UsuarioRolController extends Controller
             'id_usuario' => $request->id_usuario,
             'id_rol' => $request->id_rol,
         ]);
-        dd($relacion);
 
         return response()->json([
             'message' => 'Relación usuario-rol creada correctamente',

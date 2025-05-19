@@ -8,7 +8,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UsuarioRolController;
-
+use App\Http\Controllers\InscripcionController;
+use App\Http\Controllers\ModuloController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -67,4 +68,22 @@ Route::prefix('usuario_rol')->group(function () {
     Route::get('/{id}', [UsuarioRolController::class, 'show']);
     Route::put('/{id}', [UsuarioRolController::class, 'update']);
     Route::delete('/{id}', [UsuarioRolController::class, 'destroy']);
+});
+
+//inscripciones
+Route::prefix('inscripciones')->group(function () {
+    Route::get('/', [InscripcionController::class, 'index']);
+    Route::post('/', [InscripcionController::class, 'store']);
+    Route::put('/{id}', [InscripcionController::class, 'update']);
+    Route::delete('/{id}', [InscripcionController::class, 'destroy']);
+});
+
+
+//modulos
+Route::prefix('modulos')->group(function () {
+    Route::get('/', [ModuloController::class, 'index']);
+    Route::post('/', [ModuloController::class, 'store']);
+    Route::get('/{id}', [ModuloController::class, 'show']);
+    Route::put('/{id}', [ModuloController::class, 'update']);
+    Route::delete('/{id}', [ModuloController::class, 'destroy']);
 });

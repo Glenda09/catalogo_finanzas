@@ -22,7 +22,6 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        // Validar
         $validator = Validator::make($request->all(), [
             'email'    => 'required|email|exists:usuarios,email',
             'password' => 'required|string|min:6|max:20',
@@ -32,20 +31,16 @@ class AuthController extends Controller
             return response()->json(['message' => $validator->errors()->first()], 422);
         }
 
-        // Buscar usuario
         $user = Usuarios::where('email', $request->email)->first();
 
-        // Claims extra (roles, permisos) si deseas agregar
         $customClaims = [
             'roles' => $user->roles()->pluck('nombre'),
         ];
 
-        // Intentar autenticar y crear token
         if (!$token = auth('api')->claims($customClaims)->attempt($request->only('email', 'password'))) {
             return response()->json(['message' => 'Credenciales inválidas'], 401);
         }
 
-        // Expirar sesiones activas anteriores
         UsuarioSesion::where('id_usuario', $user->id)
             ->where('activo', self::ESTADO_ACTIVO)
             ->whereNull('closed_at')
@@ -54,11 +49,9 @@ class AuthController extends Controller
                 'closed_at' => now(),
             ]);
 
-        // Actualizar última sesión del usuario
         $user->ultima_sesion = now();
         $user->save();
 
-        // Crear refresh token
         $refreshToken = $this->generarRefreshToken($user);
 
         return $this->respondWithToken($token, $refreshToken);
@@ -76,7 +69,6 @@ class AuthController extends Controller
             return response()->json(['message' => 'Usuario no encontrado'], 404);
         }
 
-        // Marcar sesión como cerrada
         UsuarioSesion::where('id_usuario', $user->id)
             ->where('activo', self::ESTADO_ACTIVO)
             ->update([
@@ -84,7 +76,6 @@ class AuthController extends Controller
                 'closed_at' => now(),
             ]);
 
-        // Logout JWT
         auth('api')->logout();
 
         return response()->json(['message' => 'Sesión cerrada correctamente']);
@@ -116,14 +107,12 @@ class AuthController extends Controller
             return response()->json(['message' => 'Usuario no encontrado'], 404);
         }
 
-        // Claims extra si deseas agregar
         $customClaims = [
             'roles' => $user->roles()->pluck('nombre'),
         ];
 
         $token = JWTAuth::claims($customClaims)->fromUser($user);
 
-        // Expirar refresh tokens vencidos
         UsuarioSesion::where('activo', self::ESTADO_ACTIVO)
             ->where('expires_at', '<=', now())
             ->update([
@@ -131,7 +120,6 @@ class AuthController extends Controller
                 'closed_at' => now(),
             ]);
 
-        // Crear nuevo refresh token
         $newRefreshToken = $this->generarRefreshToken($user);
 
         return $this->respondWithToken($token, $newRefreshToken);

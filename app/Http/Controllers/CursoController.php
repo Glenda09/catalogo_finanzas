@@ -68,7 +68,6 @@ class CursoController extends Controller
 
             DB::beginTransaction();
 
-            // Obtener el ID del usuario desde el token
             $user = auth('api')->user();
             if (!$user) {
                 return response()->json([
@@ -77,7 +76,6 @@ class CursoController extends Controller
                 ], 401);
             }
 
-            // Crear nuevo curso
             $curso = Curso::create([
                 'titulo' => $request->titulo,
                 'descripcion' => $request->descripcion,
@@ -145,7 +143,6 @@ class CursoController extends Controller
      */
     public function update($id, Request $request)
     {
-        // Verificar si el usuario está autenticado
         $user = auth('api')->user();
         if (!$user) {
             return response()->json([
@@ -200,7 +197,6 @@ class CursoController extends Controller
      */
     public function destroy($id)
     {
-        // Verificar si el usuario está autenticado
         $user = auth('api')->user();
         if (!$user) {
             return response()->json([

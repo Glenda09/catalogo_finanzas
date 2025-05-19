@@ -9,7 +9,19 @@ use Illuminate\Support\Facades\DB;
 
 class ModuloController extends Controller
 {
-    // Listar todos los módulos
+    /**
+     * @OA\Get(
+     *     path="/api/modulos",
+     *     summary="Listar módulos con filtros opcionales",
+     *     tags={"Módulos"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="id_curso", in="query", @OA\Schema(type="integer"), description="Filtrar por ID del curso"),
+     *     @OA\Parameter(name="nombre", in="query", @OA\Schema(type="string"), description="Filtrar por nombre del módulo"),
+     *     @OA\Parameter(name="activo", in="query", @OA\Schema(type="boolean"), description="Filtrar por estado activo/inactivo"),
+     *     @OA\Parameter(name="per_page", in="query", @OA\Schema(type="integer"), description="Cantidad por página"),
+     *     @OA\Response(response=200, description="Listado de módulos")
+     * )
+     */
     public function index(Request $request)
     {
         $query = Modulo::query();
@@ -32,7 +44,27 @@ class ModuloController extends Controller
         return response()->json($modulos);
     }
 
-    // Crear un nuevo módulo
+    /**
+     * @OA\Post(
+     *     path="/api/modulos",
+     *     summary="Crear un nuevo módulo",
+     *     tags={"Módulos"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"id_curso", "nombre", "fecha_fin"},
+     *             @OA\Property(property="id_curso", type="integer"),
+     *             @OA\Property(property="nombre", type="string"),
+     *             @OA\Property(property="descripcion", type="string"),
+     *             @OA\Property(property="fecha_fin", type="string", format="date")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Módulo creado exitosamente"),
+     *     @OA\Response(response=422, description="Errores de validación"),
+     *     @OA\Response(response=401, description="Usuario no autenticado")
+     * )
+     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -50,12 +82,12 @@ class ModuloController extends Controller
 
         try {
             $user = auth('api')->user();
-        if (!$user) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Usuario no autenticado'
-            ], 401);
-        }
+            if (!$user) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Usuario no autenticado'
+                ], 401);
+            }
 
             $modulo = Modulo::create([
                 'id_curso' => $request->input('id_curso'),
@@ -83,14 +115,45 @@ class ModuloController extends Controller
         }
     }
 
-    // Mostrar un módulo específico
+    /**
+     * @OA\Get(
+     *     path="/api/modulos/{id}",
+     *     summary="Obtener un módulo por ID",
+     *     tags={"Módulos"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer"), description="ID del módulo"),
+     *     @OA\Response(response=200, description="Módulo encontrado")
+     * )
+     */
     public function show($id)
     {
         $modulo = Modulo::findOrFail($id);
         return response()->json($modulo);
     }
 
-    // Actualizar un módulo
+    /**
+     * @OA\Put(
+     *     path="/api/modulos/{id}",
+     *     summary="Actualizar un módulo existente",
+     *     tags={"Módulos"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer"), description="ID del módulo"),
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *             @OA\Property(property="id_curso", type="integer"),
+     *             @OA\Property(property="nombre", type="string"),
+     *             @OA\Property(property="descripcion", type="string"),
+     *             @OA\Property(property="fecha_inicio", type="string", format="date"),
+     *             @OA\Property(property="fecha_fin", type="string", format="date"),
+     *             @OA\Property(property="activo", type="boolean")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Módulo actualizado exitosamente"),
+     *     @OA\Response(response=404, description="Módulo no encontrado"),
+     *     @OA\Response(response=422, description="Errores de validación"),
+     *     @OA\Response(response=401, description="Usuario no autenticado")
+     * )
+     */
     public function update(Request $request, $id)
     {
         $user = auth('api')->user();
@@ -131,7 +194,19 @@ class ModuloController extends Controller
         ], 200);
     }
 
-    // Eliminar un módulo
+    /**
+     * @OA\Delete(
+     *     path="/api/modulos/{id}",
+     *     summary="Eliminar lógicamente un módulo",
+     *     tags={"Módulos"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer"), description="ID del módulo"),
+     *     @OA\Response(response=200, description="Módulo eliminado exitosamente"),
+     *     @OA\Response(response=409, description="Módulo no se puede eliminar por estar asignado a inscripciones"),
+     *     @OA\Response(response=404, description="Módulo no encontrado"),
+     *     @OA\Response(response=401, description="Usuario no autenticado")
+     * )
+     */
     public function destroy($id)
     {
         $user = auth('api')->user();

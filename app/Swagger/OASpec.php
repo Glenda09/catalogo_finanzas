@@ -4,7 +4,7 @@ namespace App\Swagger;
 
 /**
  * @OA\Info(
- *     title="API de Cursos de Idiomas",
+ *     title="API de Cursos de Finanzas",
  *     version="1.0.0",
  *     description="Documentación de la API"
  * )

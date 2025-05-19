@@ -12,6 +12,16 @@ use Illuminate\Validation\ValidationException;
 
 class UsuarioController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/api/usuarios",
+     *     summary="Listar usuarios del sistema con sus roles",
+     *     tags={"Usuarios"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="per_page", in="query", @OA\Schema(type="integer"), description="Cantidad por página"),
+     *     @OA\Response(response=200, description="Listado de usuarios paginado")
+     * )
+     */
     public function index(Request $request)
     {
         $perPage = $request->get('per_page', 10);
@@ -22,6 +32,27 @@ class UsuarioController extends Controller
         return response()->json($usuarios);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/usuarios",
+     *     summary="Registrar un nuevo usuario e instructor",
+     *     tags={"Usuarios"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"nombre", "apellido", "email", "password"},
+     *             @OA\Property(property="nombre", type="string"),
+     *             @OA\Property(property="apellido", type="string"),
+     *             @OA\Property(property="email", type="string", format="email"),
+     *             @OA\Property(property="password", type="string", format="password"),
+     *             @OA\Property(property="telefono", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Usuario e instructor creados correctamente"),
+     *     @OA\Response(response=422, description="Errores de validación"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
+     */
     public function store(Request $request)
     {
         try {

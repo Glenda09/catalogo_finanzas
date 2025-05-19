@@ -7,6 +7,17 @@ use Illuminate\Http\Request;
 
 class RoleController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/api/roles",
+     *     summary="Listar roles del sistema",
+     *     tags={"Roles"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="per_page", in="query", @OA\Schema(type="integer"), description="Cantidad por página"),
+     *     @OA\Response(response=200, description="Listado de roles paginados"),
+     *     @OA\Response(response=401, description="Usuario no autenticado")
+     * )
+     */
     public function index(Request $request)
     {
 
@@ -24,6 +35,25 @@ class RoleController extends Controller
         return response()->json($roles);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/roles",
+     *     summary="Crear un nuevo rol",
+     *     tags={"Roles"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"nombre"},
+     *             @OA\Property(property="nombre", type="string"),
+     *             @OA\Property(property="descripcion", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Rol creado correctamente"),
+     *     @OA\Response(response=401, description="Usuario no autenticado"),
+     *     @OA\Response(response=422, description="Errores de validación")
+     * )
+     */
     public function store(Request $request)
     {
         $user = auth('api')->user();
@@ -52,6 +82,25 @@ class RoleController extends Controller
         ], 201);
     }
 
+    /**
+     * @OA\Put(
+     *     path="/api/roles/{id}",
+     *     summary="Actualizar un rol existente",
+     *     tags={"Roles"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer"), description="ID del rol"),
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *             required={"nombre"},
+     *             @OA\Property(property="nombre", type="string"),
+     *             @OA\Property(property="descripcion", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Rol actualizado correctamente"),
+     *     @OA\Response(response=401, description="Usuario no autenticado"),
+     *     @OA\Response(response=422, description="Errores de validación")
+     * )
+     */
     public function update(Request $request, $id)
     {
         $user = auth('api')->user();
@@ -76,6 +125,17 @@ class RoleController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/api/roles/{id}",
+     *     summary="Desactivar un rol",
+     *     tags={"Roles"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer"), description="ID del rol"),
+     *     @OA\Response(response=200, description="Rol desactivado correctamente"),
+     *     @OA\Response(response=401, description="Usuario no autenticado")
+     * )
+     */
     public function destroy($id)
     {
         // Verificar autenticación del usuario

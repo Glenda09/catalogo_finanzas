@@ -11,6 +11,20 @@ use Illuminate\Http\Request;
 
 class InscripcionController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/api/inscripciones",
+     *     summary="Listar inscripciones activas",
+     *     security={{"bearerAuth":{}}},
+     *     tags={"Inscripciones"},
+     *     @OA\Parameter(name="id_usuario", in="query", description="ID del usuario", @OA\Schema(type="integer")),
+     *     @OA\Parameter(name="id_curso", in="query", description="ID del curso", @OA\Schema(type="integer")),
+     *     @OA\Parameter(name="fecha_inscripcion", in="query", description="Fecha exacta de inscripción", @OA\Schema(type="string", format="date")),
+     *     @OA\Parameter(name="per_page", in="query", description="Cantidad de resultados por página", @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="Listado paginado de inscripciones"),
+     *     @OA\Response(response=401, description="Usuario no autenticado")
+     * )
+     */
     public function index(Request $request)
     {
         $user = auth('api')->user();
@@ -41,6 +55,26 @@ class InscripcionController extends Controller
         return response()->json($inscripciones);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/inscripciones",
+     *     summary="Registrar una nueva inscripción a un curso",
+     *     security={{"bearerAuth":{}}},
+     *     tags={"Inscripciones"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"id_usuario", "id_curso"},
+     *             @OA\Property(property="id_usuario", type="integer"),
+     *             @OA\Property(property="id_curso", type="integer")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Inscripción creada exitosamente"),
+     *     @OA\Response(response=400, description="Curso no vigente o fuera de fecha"),
+     *     @OA\Response(response=401, description="Usuario no autenticado"),
+     *     @OA\Response(response=404, description="Curso no encontrado")
+     * )
+     */
     public function store(Request $request)
     {
         $user = auth('api')->user();
@@ -104,6 +138,26 @@ class InscripcionController extends Controller
         });
     }
 
+     /**
+     * @OA\Put(
+     *     path="/api/inscripciones/{id}",
+     *     summary="Actualizar los datos de una inscripción",
+     *     security={{"bearerAuth":{}}},
+     *     tags={"Inscripciones"},
+     *     @OA\Parameter(name="id", in="path", required=true, description="ID de la inscripción", @OA\Schema(type="integer")),
+     *     @OA\RequestBody(
+     *         required=false,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="id_usuario", type="integer"),
+     *             @OA\Property(property="id_curso", type="integer"),
+     *             @OA\Property(property="fecha_inscripcion", type="string", format="date-time")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Inscripción actualizada"),
+     *     @OA\Response(response=404, description="Inscripción no encontrada"),
+     *     @OA\Response(response=401, description="Usuario no autenticado")
+     * )
+     */
     public function update(Request $request, $id)
     {
         $user = auth('api')->user();
@@ -126,6 +180,18 @@ class InscripcionController extends Controller
         return response()->json($inscripcion);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/api/inscripciones/{id}",
+     *     summary="Eliminar lógicamente una inscripción",
+     *     security={{"bearerAuth":{}}},
+     *     tags={"Inscripciones"},
+     *     @OA\Parameter(name="id", in="path", required=true, description="ID de la inscripción", @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="Inscripción desactivada correctamente"),
+     *     @OA\Response(response=404, description="Inscripción no encontrada"),
+     *     @OA\Response(response=401, description="Usuario no autenticado")
+     * )
+     */
     public function destroy($id)
     {
         $user = auth('api')->user();

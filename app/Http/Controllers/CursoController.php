@@ -10,12 +10,34 @@ use Illuminate\Support\Facades\DB;
 class CursoController extends Controller
 {
     /**
-     * Muestra una lista de los recursos Curso.
-     *
-     * Este método recupera y devuelve una colección de cursos disponibles en el sistema.
-     * Generalmente se utiliza para mostrar todos los cursos en una vista de listado.
-     *
-     * @return \Illuminate\Http\Response Respuesta HTTP con la lista de cursos.
+     * @OA\Get(
+     *     path="/api/cursos",
+     *     summary="Listar cursos activos",
+     *     security={{"bearerAuth":{}}},
+     *     tags={"Cursos"},
+     *     @OA\Parameter(
+     *         name="categoria",
+     *         in="query",
+     *         description="Filtrar por nombre de categoría",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="titulo",
+     *         in="query",
+     *         description="Filtrar por título del curso",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         description="Cantidad de resultados por página",
+     *         required=false,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Listado paginado de cursos")
+     * )
      */
     public function index(Request $request)
     {
@@ -37,14 +59,27 @@ class CursoController extends Controller
     }
 
     /**
-     * Realiza una operación específica basada en los parámetros proporcionados.
-     *
-     * Este método toma los valores de entrada y ejecuta la lógica principal del proceso,
-     * devolviendo el resultado correspondiente. Asegúrate de validar los parámetros antes de llamar a este método.
-     *
-     * @param int $param1 El primer parámetro necesario para la operación.
-     * @param string $param2 Una cadena que influye en el comportamiento del método.
-     * @return bool Devuelve true si la operación fue exitosa, false en caso contrario.
+     * @OA\Post(
+     *     path="/api/cursos",
+     *     summary="Crear un nuevo curso",
+     *     security={{"bearerAuth":{}}},
+     *     tags={"Cursos"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"titulo","descripcion","precio","duracion","id_instructor","id_categoria"},
+     *             @OA\Property(property="titulo", type="string"),
+     *             @OA\Property(property="descripcion", type="string"),
+     *             @OA\Property(property="precio", type="number", format="float"),
+     *             @OA\Property(property="duracion", type="integer"),
+     *             @OA\Property(property="id_instructor", type="integer"),
+     *             @OA\Property(property="id_categoria", type="integer")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Curso creado exitosamente"),
+     *     @OA\Response(response=422, description="Errores de validación"),
+     *     @OA\Response(response=401, description="Usuario no autenticado")
+     * )
      */
     public function store(Request $request)
     {
@@ -56,6 +91,7 @@ class CursoController extends Controller
                 'duracion' => 'required|integer|min:1',
                 'id_instructor' => 'required|exists:instructores,id',
                 'id_categoria' => 'required|exists:categorias,id',
+                'fecha_fin_vigencia' => 'required|date|after:fecha_incio_vigencia',
             ]);
 
             if ($validator->fails()) {
@@ -80,7 +116,8 @@ class CursoController extends Controller
                 'titulo' => $request->titulo,
                 'descripcion' => $request->descripcion,
                 'precio' => $request->precio,
-                'duracion_horas' => $request->duracion,
+                'fecha_inicio_vigencia' => now(),
+                'fecha_fin_vigencia' => $request->fecha_fin_vigencia,
                 'id_instructor' => $request->id_instructor,
                 'id_categoria' => $request->id_categoria,
                 'creado_por' => $user->id,
@@ -105,13 +142,21 @@ class CursoController extends Controller
     }
 
     /**
-     * Muestra un recurso específico.
-     *
-     * Este método recupera y devuelve un curso específico basado en su ID.
-     * Generalmente se utiliza para mostrar los detalles de un curso en una vista.
-     *
-     * @param int $id El ID del curso a mostrar.
-     * @return \Illuminate\Http\Response Respuesta HTTP con los detalles del curso.
+     * @OA\Get(
+     *     path="/api/cursos/{id}",
+     *     summary="Obtener detalles de un curso",
+     *     security={{"bearerAuth":{}}},
+     *     tags={"Cursos"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID del curso",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Detalles del curso"),
+     *     @OA\Response(response=404, description="Curso no encontrado")
+     * )
      */
     public function show($id)
     {
@@ -132,14 +177,34 @@ class CursoController extends Controller
     }
 
     /**
-     * Actualiza un recurso específico.
-     *
-     * Este método toma los datos de entrada y actualiza un curso existente en el sistema.
-     * Asegúrate de validar los parámetros antes de llamar a este método.
-     *
-     * @param int $id El ID del curso a actualizar.
-     * @param \Illuminate\Http\Request $request Los datos de entrada para la actualización.
-     * @return \Illuminate\Http\Response Respuesta HTTP con el resultado de la operación.
+     * @OA\Put(
+     *     path="/api/cursos/{id}",
+     *     summary="Actualizar un curso existente",
+     *     security={{"bearerAuth":{}}},
+     *     tags={"Cursos"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID del curso a actualizar",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="titulo", type="string"),
+     *             @OA\Property(property="descripcion", type="string"),
+     *             @OA\Property(property="precio", type="number", format="float"),
+     *             @OA\Property(property="duracion", type="integer"),
+     *             @OA\Property(property="id_instructor", type="integer"),
+     *             @OA\Property(property="id_categoria", type="integer")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Curso actualizado"),
+     *     @OA\Response(response=404, description="Curso no encontrado"),
+     *     @OA\Response(response=401, description="Usuario no autenticado"),
+     *     @OA\Response(response=422, description="Errores de validación")
+     * )
      */
     public function update($id, Request $request)
     {
@@ -187,13 +252,22 @@ class CursoController extends Controller
     }
 
     /**
-     * Desactiva un recurso específico.
-     *
-     * Este método marca un curso existente como inactivo en lugar de eliminarlo físicamente.
-     * Generalmente se utiliza para desactivar un curso en el sistema.
-     *
-     * @param int $id El ID del curso a desactivar.
-     * @return \Illuminate\Http\Response Respuesta HTTP con el resultado de la operación.
+     * @OA\Delete(
+     *     path="/api/cursos/{id}",
+     *     summary="Desactivar un curso",
+     *     security={{"bearerAuth":{}}},
+     *     tags={"Cursos"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID del curso a desactivar",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Curso desactivado correctamente"),
+     *     @OA\Response(response=404, description="Curso no encontrado"),
+     *     @OA\Response(response=401, description="Usuario no autenticado")
+     * )
      */
     public function destroy($id)
     {

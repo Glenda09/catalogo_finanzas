@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('titulo');
             $table->text('descripcion')->nullable();
             $table->decimal('precio', 8, 2);
-            $table->integer('duracion_horas');
+            $table->date('fecha_inicio_vigencia')->nullable();
+            $table->date('fecha_fin_vigencia')->nullable();
             $table->foreignId('id_categoria')->constrained('categorias')->onDelete('cascade');
             $table->foreignId('id_instructor')->constrained('instructores')->onDelete('cascade');
             $table->boolean('activo')->default(true);

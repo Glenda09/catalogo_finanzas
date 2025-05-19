@@ -1,0 +1,276 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API de Cursos de Idiomas",
+        "description": "Documentación de la API",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/cursos": {
+            "get": {
+                "tags": [
+                    "Cursos"
+                ],
+                "summary": "Listar cursos activos",
+                "operationId": "ce4902ce36ce58b9ed475eabcbf2dd16",
+                "parameters": [
+                    {
+                        "name": "categoria",
+                        "in": "query",
+                        "description": "Filtrar por nombre de categoría",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "titulo",
+                        "in": "query",
+                        "description": "Filtrar por título del curso",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Cantidad de resultados por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado paginado de cursos"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Cursos"
+                ],
+                "summary": "Crear un nuevo curso",
+                "operationId": "1ca42229715ee4cbdb9820b86e639989",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "titulo",
+                                    "descripcion",
+                                    "precio",
+                                    "duracion",
+                                    "id_instructor",
+                                    "id_categoria"
+                                ],
+                                "properties": {
+                                    "titulo": {
+                                        "type": "string"
+                                    },
+                                    "descripcion": {
+                                        "type": "string"
+                                    },
+                                    "precio": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "duracion": {
+                                        "type": "integer"
+                                    },
+                                    "id_instructor": {
+                                        "type": "integer"
+                                    },
+                                    "id_categoria": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Curso creado exitosamente"
+                    },
+                    "422": {
+                        "description": "Errores de validación"
+                    },
+                    "401": {
+                        "description": "Usuario no autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/cursos/{id}": {
+            "get": {
+                "tags": [
+                    "Cursos"
+                ],
+                "summary": "Obtener detalles de un curso",
+                "operationId": "58f560a4db42a34037d1797cb58f4c3b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del curso",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalles del curso"
+                    },
+                    "404": {
+                        "description": "Curso no encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Cursos"
+                ],
+                "summary": "Actualizar un curso existente",
+                "operationId": "69cf34dcba8f354e6c95826a1c34004a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del curso a actualizar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "titulo": {
+                                        "type": "string"
+                                    },
+                                    "descripcion": {
+                                        "type": "string"
+                                    },
+                                    "precio": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "duracion": {
+                                        "type": "integer"
+                                    },
+                                    "id_instructor": {
+                                        "type": "integer"
+                                    },
+                                    "id_categoria": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Curso actualizado"
+                    },
+                    "404": {
+                        "description": "Curso no encontrado"
+                    },
+                    "401": {
+                        "description": "Usuario no autenticado"
+                    },
+                    "422": {
+                        "description": "Errores de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Cursos"
+                ],
+                "summary": "Desactivar un curso",
+                "operationId": "6e380143cdb74c2815086d3935bff525",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del curso a desactivar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Curso desactivado correctamente"
+                    },
+                    "404": {
+                        "description": "Curso no encontrado"
+                    },
+                    "401": {
+                        "description": "Usuario no autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Introduce el token JWT aquí. Ejemplo: Bearer {token}",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Cursos",
+            "description": "Cursos"
+        }
+    ],
+    "security": [
+        {
+            "bearerAuth": []
+        }
+    ]
+}

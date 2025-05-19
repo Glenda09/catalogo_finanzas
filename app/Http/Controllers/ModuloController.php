@@ -151,6 +151,17 @@ class ModuloController extends Controller
             ], 404);
         }
 
+        // Verificar si el curso al que pertenece el módulo está asignado a alguna inscripción
+        $inscripcionCurso = DB::table('inscripcions')
+            ->where('id_curso', $modulo->id_curso)
+            ->exists();
+
+        if ($inscripcionCurso) {
+            return response()->json([
+                'message' => 'No se puede eliminar el módulo porque está asignado a una inscripción'
+            ], 409);
+        }
+
         $modulo->activo = false;
         $modulo->save();
 

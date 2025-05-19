@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Curso;
 use App\Models\Inscripcion;
 use App\Models\Progreso;
 use App\Models\Modulo;
@@ -54,6 +55,26 @@ class InscripcionController extends Controller
             'id_usuario' => 'required|exists:usuarios,id',
             'id_curso' => 'required|exists:cursos,id',
         ]);
+
+        // Validar que el curso esté vigente
+        $curso = Curso::where('id', $request->id_curso)
+            ->where('fecha_fin_vigencia', '>=', now())
+            ->where('activo', true)
+            ->first();
+
+        if (!$curso) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Curso no encontrado o inactivo'
+            ], 404);
+        }
+
+        if ($curso->fecha_fin_vigencia && now()->gt($curso->fecha_fin_vigencia)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'El curso ya no está vigente'
+            ], 400);
+        }
 
         return DB::transaction(function () use ($request) {
             $inscripcion = Inscripcion::create([

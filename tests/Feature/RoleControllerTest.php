@@ -51,6 +51,7 @@ class RoleControllerTest extends TestCase
 
         $response = $this->withHeaders(['Authorization' => "Bearer $this->token"])
             ->put("/api/roles/{$role->id}", [
+                'estado' => 'activo',
                 'nombre' => 'Editor Avanzado',
                 'descripcion' => 'Permisos extendidos'
             ]);

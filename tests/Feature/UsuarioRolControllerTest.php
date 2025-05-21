@@ -24,7 +24,7 @@ class UsuarioRolControllerTest extends TestCase
     public function test_puede_listar_usuario_roles()
     {
         $response = $this->withHeaders(['Authorization' => "Bearer $this->token"])
-            ->get('/api/usuario-roles');
+            ->get('/api/usuario_rol');
 
         $response->assertStatus(200);
     }
@@ -35,7 +35,7 @@ class UsuarioRolControllerTest extends TestCase
         $rol = Role::create(['nombre' => 'Tester', 'descripcion' => '', 'creado_por' => $usuario->id]);
 
         $response = $this->withHeaders(['Authorization' => "Bearer $this->token"])
-            ->post('/api/usuario-roles', [
+            ->post('/api/usuario_rol', [
                 'id_usuario' => $usuario->id,
                 'id_rol' => $rol->id
             ]);
@@ -59,7 +59,7 @@ class UsuarioRolControllerTest extends TestCase
         ]);
 
         $response = $this->withHeaders(['Authorization' => "Bearer $this->token"])
-            ->put("/api/usuario-roles/{$relacion->id}", [
+            ->put("/api/usuario_rol/{$relacion->id}", [
                 'id_usuario' => $usuario->id,
                 'id_rol' => $rol2->id
             ]);
@@ -79,7 +79,7 @@ class UsuarioRolControllerTest extends TestCase
         ]);
 
         $response = $this->withHeaders(['Authorization' => "Bearer $this->token"])
-            ->delete("/api/usuario-roles/{$relacion->id}");
+            ->delete("/api/usuario_rol/{$relacion->id}");
 
         $response->assertStatus(200);
         $this->assertDatabaseMissing('usuario_rol', ['id' => $relacion->id]);

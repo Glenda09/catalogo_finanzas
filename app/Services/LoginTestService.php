@@ -7,16 +7,16 @@ use Laravel\Passport\Passport;
 
 class LoginTestService
 {
-    public function login(array $claims = [])
+    public function login(): Usuarios
     {
         $usuario = Usuarios::create([
             'nombre' => 'Test',
             'apellido' => 'User',
             'email' => 'test@example.com',
-            'password' => bcrypt('password'),
+            'password' => 'password',
         ]);
 
-        Passport::actingAs($usuario, $claims);
+          auth()->login($usuario);
 
         return $usuario;
     }

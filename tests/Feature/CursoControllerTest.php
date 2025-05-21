@@ -8,10 +8,12 @@ use App\Models\Instructor;
 use App\Models\Usuarios;
 use App\Services\LoginTestService;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CursoControllerTest extends TestCase
 {
     protected $token;
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
